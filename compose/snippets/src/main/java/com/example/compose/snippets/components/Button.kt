@@ -21,16 +21,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Spacer
 
 @Composable
 fun ButtonExamples() {
@@ -44,7 +50,12 @@ fun ButtonExamples() {
         Text("Filled button:")
         FilledButtonExample(onClick = { Log.d("Filled button", "Filled button clicked.") })
         Text("Filled tonal button:")
-        FilledTonalButtonExample(onClick = { Log.d("Filled tonal button", "Filled tonal button clicked.") })
+        FilledTonalButtonExample(onClick = {
+            Log.d(
+                "Filled tonal button",
+                "Filled tonal button clicked."
+            )
+        })
         Text("Elevated button:")
         ElevatedButtonExample(onClick = { Log.d("Elevated button", "Elevated button clicked.") })
         Text("Outlined button:")
@@ -52,6 +63,7 @@ fun ButtonExamples() {
         Text("Text button")
         TextButtonExample(onClick = { Log.d("Text button", "Text button clicked.") })
     }
+
 }
 
 // [START android_compose_components_filledbutton]
@@ -100,3 +112,21 @@ fun TextButtonExample(onClick: () -> Unit) {
     }
 }
 // [END android_compose_components_textbutton]
+
+@Preview
+@Composable
+fun IconTextButtonExample() {
+    Button(onClick = {}) {
+        //如果想要达到竖向的目的，按照下面这个在包裹一层
+        Column(horizontalAlignment = Alignment.CenterHorizontally) { // 让内容垂直排列，并水平居中
+            Icon(Icons.Default.Favorite, contentDescription = "喜欢")
+            Text("喜欢")
+        }
+        Spacer(modifier = Modifier.width(20.dp))
+        //这个是默认的
+        Icon(Icons.Default.Favorite, contentDescription = "喜欢") // 图标
+        Spacer(modifier = Modifier.width(8.dp)) // 间距
+        Text("喜欢") // 文本
+    }
+}
+
