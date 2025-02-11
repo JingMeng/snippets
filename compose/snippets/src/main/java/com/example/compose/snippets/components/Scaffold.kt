@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
+//这个能够被预览，也能被activity直接执行，只是使用的时候不能传递参数过来
 @Preview
 // [START android_compose_components_scaffold]
 @Composable
