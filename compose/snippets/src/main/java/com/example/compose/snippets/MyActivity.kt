@@ -17,6 +17,7 @@
 package com.example.compose.snippets
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
@@ -54,8 +55,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose.snippets.ui.theme.SnippetsTheme
@@ -76,43 +83,81 @@ class MyActivity : ComponentActivity() {
 //            }
 
             SnippetsTheme {
-                ScaffoldExample()
+                SampleScreen()
             }
         }
     }
 
-
+    @Preview
     @Composable
     fun SampleScreen() {
-        ExpandableText("这是一个很长的文本示例，需要支持展开和折叠的功能。超过三行后，应该显示省略号，并提供‘展开’按钮，点击后应该显示完整文本，并提供‘关闭’按钮。")
+        ExpandableText("这是一个很长的文本示例，需要支持展开和折叠的功能。超过三行后，应该显示省略号，并提供‘展开’按钮，点击后应该显示完整文本，并提供‘关闭’按钮。这是一个很长的文本示例，需要支持展开和折叠的功能。超过三行后，应该显示省略号，并提供‘展开’按钮，点击后应该显示完整文本，并提供‘关闭’按钮。")
     }
 
     @Composable
     fun ExpandableText(text: String, maxLines: Int = 3) {
         var expanded by remember { mutableStateOf(false) }
-        val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+        var isOverflowed by remember { mutableStateOf(false) }
+        var collapsedText by remember { mutableStateOf(text) } // 折叠时显示的文本
+
+        val textMeasurer = rememberTextMeasurer()
+        val textStyle = MaterialTheme.typography.body1
 
         Column {
             Text(
-                text = text,
+                text = buildAnnotatedString {
+                    if (expanded) {
+                        // 展开状态，显示完整文本 + 关闭按钮
+                        append(text)
+                        append(" ")
+                        withStyle(
+                            SpanStyle(
+                                color = Color.Blue,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        ) {
+                            append("关闭")
+                        }
+                    } else {
+                        // 折叠状态，显示截断后的文本 + "… 展开"
+                        append(collapsedText)
+                    }
+                },
                 maxLines = if (expanded) Int.MAX_VALUE else maxLines,
                 overflow = TextOverflow.Ellipsis,
-                onTextLayout = { textLayoutResult.value = it },
-                style = MaterialTheme.typography.h3
+                onTextLayout = { result ->
+                    //根据这个注释加了一个等于号
+                    Log.d("MyActivity", "-----$expanded--------expanded-----${result.lineCount}---")
+                    if (!expanded) {
+                        if (result.lineCount >= maxLines) {
+                            isOverflowed = true
+                            val expandText = "… 展开" // 额外显示的文本
+
+                            // 获取 maxLines 可显示的最大文本
+                            val lastLineStart = result.getLineStart(maxLines - 1)
+                            val lastLineEnd = result.getLineEnd(maxLines - 1)
+                            var lastLineText = text.substring(lastLineStart, lastLineEnd).trimEnd()
+
+                            Log.d("MyActivity", "-----$lastLineText---------$expandText---------")
+                            // 确保 "... 展开" 可以完整显示在最后一行
+                            while (textMeasurer.measure(
+                                    lastLineText + expandText,
+                                    style = textStyle
+                                ).size.width > result.size.width
+                            ) {
+                                if (lastLineText.isEmpty()) break
+                                lastLineText = lastLineText.dropLast(1) // 逐字减少，保证能放下 "... 展开"
+                            }
+
+                            collapsedText =
+                                text.substring(0, lastLineStart) + lastLineText + expandText
+                        } else {
+                            isOverflowed = false
+                        }
+                    }
+                },
+                modifier = Modifier.clickable { expanded = !expanded }
             )
-
-            // 计算是否需要展开按钮
-            val isOverflowed = textLayoutResult.value?.let {
-                it.lineCount > maxLines
-            } ?: false
-
-            if (isOverflowed || expanded) {
-                Text(
-                    text = if (expanded) "关闭" else "展开",
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier.clickable { expanded = !expanded }
-                )
-            }
         }
     }
 
