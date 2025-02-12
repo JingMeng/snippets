@@ -34,6 +34,7 @@ import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.icons.Icons
@@ -44,11 +45,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose.snippets.ui.theme.SnippetsTheme
@@ -64,11 +71,51 @@ class MyActivity : ComponentActivity() {
 
 //            test2()
 
+//            SnippetsTheme {
+//                ScaffoldExample()
+//            }
+
             SnippetsTheme {
                 ScaffoldExample()
             }
         }
     }
+
+
+    @Composable
+    fun SampleScreen() {
+        ExpandableText("这是一个很长的文本示例，需要支持展开和折叠的功能。超过三行后，应该显示省略号，并提供‘展开’按钮，点击后应该显示完整文本，并提供‘关闭’按钮。")
+    }
+
+    @Composable
+    fun ExpandableText(text: String, maxLines: Int = 3) {
+        var expanded by remember { mutableStateOf(false) }
+        val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+
+        Column {
+            Text(
+                text = text,
+                maxLines = if (expanded) Int.MAX_VALUE else maxLines,
+                overflow = TextOverflow.Ellipsis,
+                onTextLayout = { textLayoutResult.value = it },
+                style = MaterialTheme.typography.h3
+            )
+
+            // 计算是否需要展开按钮
+            val isOverflowed = textLayoutResult.value?.let {
+                it.lineCount > maxLines
+            } ?: false
+
+            if (isOverflowed || expanded) {
+                Text(
+                    text = if (expanded) "关闭" else "展开",
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier.clickable { expanded = !expanded }
+                )
+            }
+        }
+    }
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
