@@ -115,37 +115,47 @@ class MyActivity : ComponentActivity() {
                         }
                     }
                 } else {
-                    collapsedText // **这里直接使用 AnnotatedString**
+                    collapsedText
                 },
                 maxLines = if (expanded) Int.MAX_VALUE else maxLines,
                 overflow = TextOverflow.Ellipsis,
                 onTextLayout = { result ->
-                    Log.d("ExpandableText", "expanded: $expanded, 行数: ${result.lineCount}，isOverflowed:${isOverflowed}")
+                    Log.d("ExpandableText", "expanded: $expanded, 行数: ${result.lineCount}，isOverflowed: $isOverflowed")
 
+                    // 判断是否溢出并需要折叠
                     if (!expanded && result.lineCount >= maxLines) {
-                        isOverflowed = true
-                        val expandText = AnnotatedString(
-                            "… 展开",
-                            spanStyle = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)
-                        )
-
+                        // 获取最后一行结束位置的文本
                         val lastLineStart = result.getLineStart(maxLines - 1)
                         val lastLineEnd = result.getLineEnd(maxLines - 1)
                         var lastLineText = text.substring(lastLineStart, lastLineEnd).trimEnd()
 
-                        Log.d("ExpandableText", "原始最后一行: $lastLineText")
+                        // 获取剩余的文本（被截断部分）
+                        val remainingText = text.substring(lastLineEnd).trimEnd()
 
-                        while (textMeasurer.measure(lastLineText + expandText.text, style = textStyle).size.width > result.size.width) {
-                            if (lastLineText.isEmpty()) break
-                            lastLineText = lastLineText.dropLast(1)
+                        // 判断最后一行的文本和剩余文本是否一致
+                        if (lastLineText != remainingText) {
+                            isOverflowed = true
+                            val expandText = AnnotatedString(
+                                " 展开",
+                                spanStyle = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)
+                            )
+
+                            val ellipsisText = "…" // 省略号保持原样式
+
+                            // 确保 "… 展开" 完整显示
+                            while (textMeasurer.measure(lastLineText + ellipsisText + expandText.text, style = textStyle).size.width > result.size.width) {
+                                if (lastLineText.isEmpty()) break
+                                lastLineText = lastLineText.dropLast(1)
+                            }
+
+                            collapsedText = buildAnnotatedString {
+                                append(text.substring(0, lastLineStart) + lastLineText)
+                                append(ellipsisText) // 保持原样式的省略号
+                                append(expandText) // "展开" 应用蓝色和下划线
+                            }
+
+                            Log.d("ExpandableText", "计算后的 collapsedText: $collapsedText")
                         }
-
-                        collapsedText = buildAnnotatedString {
-                            append(text.substring(0, lastLineStart) + lastLineText)
-                            append(expandText) // **"展开" 保持蓝色**
-                        }
-
-                        Log.d("ExpandableText", "计算后的 collapsedText: $collapsedText")
                     } else {
                         isOverflowed = false
                     }
@@ -154,6 +164,7 @@ class MyActivity : ComponentActivity() {
             )
         }
     }
+
 
 
     @OptIn(ExperimentalMaterial3Api::class)
