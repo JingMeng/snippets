@@ -55,6 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
@@ -98,62 +99,55 @@ class MyActivity : ComponentActivity() {
     fun ExpandableText(text: String, maxLines: Int = 3) {
         var expanded by remember { mutableStateOf(false) }
         var isOverflowed by remember { mutableStateOf(false) }
-        var collapsedText by remember { mutableStateOf(text) } // 折叠时显示的文本
+        var collapsedText by remember { mutableStateOf<AnnotatedString>(AnnotatedString(text)) }
 
         val textMeasurer = rememberTextMeasurer()
         val textStyle = MaterialTheme.typography.body1
 
         Column {
             Text(
-                text = buildAnnotatedString {
-                    if (expanded) {
-                        // 展开状态，显示完整文本 + 关闭按钮
+                text = if (expanded) {
+                    buildAnnotatedString {
                         append(text)
                         append(" ")
-                        withStyle(
-                            SpanStyle(
-                                color = Color.Blue,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        ) {
+                        withStyle(SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
                             append("关闭")
                         }
-                    } else {
-                        // 折叠状态，显示截断后的文本 + "… 展开"
-                        append(collapsedText)
                     }
+                } else {
+                    collapsedText // **这里直接使用 AnnotatedString**
                 },
                 maxLines = if (expanded) Int.MAX_VALUE else maxLines,
                 overflow = TextOverflow.Ellipsis,
                 onTextLayout = { result ->
-                    //根据这个注释加了一个等于号
-                    Log.d("MyActivity", "-----$expanded--------expanded-----${result.lineCount}---")
-                    if (!expanded) {
-                        if (result.lineCount >= maxLines) {
-                            isOverflowed = true
-                            val expandText = "… 展开" // 额外显示的文本
+                    Log.d("ExpandableText", "expanded: $expanded, 行数: ${result.lineCount}，isOverflowed:${isOverflowed}")
 
-                            // 获取 maxLines 可显示的最大文本
-                            val lastLineStart = result.getLineStart(maxLines - 1)
-                            val lastLineEnd = result.getLineEnd(maxLines - 1)
-                            var lastLineText = text.substring(lastLineStart, lastLineEnd).trimEnd()
+                    if (!expanded && result.lineCount >= maxLines) {
+                        isOverflowed = true
+                        val expandText = AnnotatedString(
+                            "… 展开",
+                            spanStyle = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)
+                        )
 
-                            Log.d("MyActivity", "-----$lastLineText---------$expandText---------")
-                            // 确保 "... 展开" 可以完整显示在最后一行
-                            while (textMeasurer.measure(
-                                    lastLineText + expandText,
-                                    style = textStyle
-                                ).size.width > result.size.width
-                            ) {
-                                if (lastLineText.isEmpty()) break
-                                lastLineText = lastLineText.dropLast(1) // 逐字减少，保证能放下 "... 展开"
-                            }
+                        val lastLineStart = result.getLineStart(maxLines - 1)
+                        val lastLineEnd = result.getLineEnd(maxLines - 1)
+                        var lastLineText = text.substring(lastLineStart, lastLineEnd).trimEnd()
 
-                            collapsedText =
-                                text.substring(0, lastLineStart) + lastLineText + expandText
-                        } else {
-                            isOverflowed = false
+                        Log.d("ExpandableText", "原始最后一行: $lastLineText")
+
+                        while (textMeasurer.measure(lastLineText + expandText.text, style = textStyle).size.width > result.size.width) {
+                            if (lastLineText.isEmpty()) break
+                            lastLineText = lastLineText.dropLast(1)
                         }
+
+                        collapsedText = buildAnnotatedString {
+                            append(text.substring(0, lastLineStart) + lastLineText)
+                            append(expandText) // **"展开" 保持蓝色**
+                        }
+
+                        Log.d("ExpandableText", "计算后的 collapsedText: $collapsedText")
+                    } else {
+                        isOverflowed = false
                     }
                 },
                 modifier = Modifier.clickable { expanded = !expanded }
