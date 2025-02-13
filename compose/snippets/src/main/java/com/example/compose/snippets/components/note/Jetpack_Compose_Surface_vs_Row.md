@@ -48,14 +48,14 @@ Surface 是专门设计来做装饰性容器的，它本身提供了很多视觉
 
 **示例**：
 
-Surface(
-    modifier = Modifier.padding(16.dp),
-    color = Color.Blue,
-    shape = RoundedCornerShape(12.dp),
-    elevation = 4.dp
-) {
-    Text(text = "This is a Surface with background, rounded corners, and shadow")
-}
+    Surface(
+        modifier = Modifier.padding(16.dp),
+        color = Color.Blue,
+        shape = RoundedCornerShape(12.dp),
+        elevation = 4.dp
+    ) {
+        Text(text = "This is a Surface with background, rounded corners, and shadow")
+    }
 
 ---
 
@@ -69,28 +69,28 @@ Row 是一个布局容器，用来水平排列子元素，它本身并不提供�
 
 **示例**：
 
-Row(
-    modifier = Modifier
-        .background(Color.Blue)
-        .clip(RoundedCornerShape(12.dp))
-        .padding(16.dp)
-) {
-    Text(text = "This is a Row with background and rounded corners")
-}
+    Row(
+        modifier = Modifier
+            .background(Color.Blue)
+            .clip(RoundedCornerShape(12.dp))
+            .padding(16.dp)
+    ) {
+        Text(text = "This is a Row with background and rounded corners")
+    }
 
 如果要给 Row 添加阴影，通常你会使用 `Modifier.shadow`，但这不是 Row 的默认行为。
 
 **示例（添加阴影）**：
 
-Row(
-    modifier = Modifier
-        .background(Color.Blue)
-        .clip(RoundedCornerShape(12.dp))
-        .shadow(4.dp) // 添加阴影
-        .padding(16.dp)
-) {
-    Text(text = "This Row has background, rounded corners, and shadow")
-}
+    Row(
+        modifier = Modifier
+            .background(Color.Blue)
+            .clip(RoundedCornerShape(12.dp))
+            .shadow(4.dp) // 添加阴影
+            .padding(16.dp)
+    ) {
+        Text(text = "This Row has background, rounded corners, and shadow")
+    }
 
 ---
 
