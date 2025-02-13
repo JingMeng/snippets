@@ -94,6 +94,8 @@ class MyActivity : ComponentActivity() {
             SnippetsTheme {
                 SampleScreen()
             }
+
+
         }
     }
 
