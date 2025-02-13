@@ -34,18 +34,19 @@
 `Surface` 是一种简化样式和布局设置的方式，尤其在处理需要背景、形状和阴影等效果时非常有用。通过使用 `Surface`，可以更加方便地提升 UI 的层次感和美观度。
 
 
+----------------------
 
 使用 Surface  和 Row 对比一下背景圆角之类的设置
 
-1. 使用 Surface 设置背景、圆角等
+### 1. 使用 Surface 设置背景、圆角等
 
 Surface 是专门设计来做装饰性容器的，它本身提供了很多视觉效果的属性，可以非常方便地设置背景、圆角、阴影等。
 
-- 背景颜色：可以直接使用 color 参数设置背景色。
-- 圆角：通过 shape 参数来设置圆角，可以控制整个 Surface 的形状。
-- 阴影：通过 elevation 参数来设置阴影效果，来创建浮动感。
+- **背景颜色**：可以直接使用 `color` 参数设置背景色。
+- **圆角**：通过 `shape` 参数来设置圆角，可以控制整个 Surface 的形状。
+- **阴影**：通过 `elevation` 参数来设置阴影效果，来创建浮动感。
 
-示例：
+**示例**：
 
 Surface(
     modifier = Modifier.padding(16.dp),
@@ -56,15 +57,17 @@ Surface(
     Text(text = "This is a Surface with background, rounded corners, and shadow")
 }
 
-2. 使用 Row 设置背景、圆角等
+---
+
+### 2. 使用 Row 设置背景、圆角等
 
 Row 是一个布局容器，用来水平排列子元素，它本身并不提供直接设置背景、圆角等样式的属性。虽然 Row 是可以通过 Modifier 来设置样式，但并没有像 Surface 那样内置直接支持这些效果的功能。
 
-- 背景颜色：需要通过 Modifier.background 来设置。
-- 圆角：可以通过 Modifier.clip 来实现。
-- 阴影：不能直接通过 Row 设置阴影效果，需要额外的布局或处理。
+- **背景颜色**：需要通过 `Modifier.background` 来设置。
+- **圆角**：可以通过 `Modifier.clip` 来实现。
+- **阴影**：不能直接通过 Row 设置阴影效果，需要额外的布局或处理。
 
-示例：
+**示例**：
 
 Row(
     modifier = Modifier
@@ -75,9 +78,9 @@ Row(
     Text(text = "This is a Row with background and rounded corners")
 }
 
-如果要给 Row 添加阴影，通常你会使用 Modifier.shadow，但这不是 Row 的默认行为。
+如果要给 Row 添加阴影，通常你会使用 `Modifier.shadow`，但这不是 Row 的默认行为。
 
-示例（添加阴影）：
+**示例（添加阴影）**：
 
 Row(
     modifier = Modifier
@@ -89,17 +92,21 @@ Row(
     Text(text = "This Row has background, rounded corners, and shadow")
 }
 
-总结对比
+---
 
-- 背景：
-  - Surface 提供了 color 属性直接设置背景，而 Row 需要通过 Modifier.background 来设置。
+### 总结对比
 
-- 圆角：
-  - Surface 提供了 shape 属性直接设置圆角，而 Row 需要使用 Modifier.clip。
+- **背景**：
+  - `Surface` 提供了 `color` 属性直接设置背景，而 `Row` 需要通过 `Modifier.background` 来设置。
 
-- 阴影：
-  - Surface 提供了 elevation 属性直接设置阴影，而 Row 需要手动使用 Modifier.shadow 来添加阴影。
+- **圆角**：
+  - `Surface` 提供了 `shape` 属性直接设置圆角，而 `Row` 需要使用 `Modifier.clip`。
 
-简而言之，Surface 是专门设计来做容器、外观设置和装饰的控件，它提供了更简洁和直观的 API 来控制外观。而 Row 更多的是一个布局控件，需要手动使用 Modifier 来实现相似的效果，灵活性较高，但相对来说代码会稍微冗长。
+- **阴影**：
+  - `Surface` 提供了 `elevation` 属性直接设置阴影，而 `Row` 需要手动使用 `Modifier.shadow` 来添加阴影。
+
+---
+
+简而言之，`Surface` 是专门设计来做容器、外观设置和装饰的控件，它提供了更简洁和直观的 API 来控制外观。而 `Row` 更多的是一个布局控件，需要手动使用 `Modifier` 来实现相似的效果，灵活性较高，但相对来说代码会稍微冗长。
 
 
