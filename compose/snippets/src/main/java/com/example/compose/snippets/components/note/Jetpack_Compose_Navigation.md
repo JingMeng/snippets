@@ -162,6 +162,60 @@ NavHost(navController = navController, startDestination = "home") {
 }
 ```
 
+### 完整示例
+
+```
+@Composable
+fun MyNavGraph(navController: NavController) {
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            HomeScreen(navController)
+        }
+        // 嵌套路由
+        navigation(startDestination = "nestedStart", route = "nested") {
+            composable("nestedStart") {
+                NestedStartScreen(navController)
+            }
+            composable("nestedEnd") {
+                NestedEndScreen(navController)
+            }
+        }
+    }
+}
+
+@Composable
+fun HomeScreen(navController: NavController) {
+    Column {
+        Text("This is the Home Screen")
+        Button(onClick = { navController.navigate("nested/nestedStart") }) {
+            Text("Go to Nested Navigation")
+        }
+    }
+}
+
+@Composable
+fun NestedStartScreen(navController: NavController) {
+    Column {
+        Text("This is the Nested Start Screen")
+        Button(onClick = { navController.navigate("nested/nestedEnd") }) {
+            Text("Go to Nested End")
+        }
+    }
+}
+
+@Composable
+fun NestedEndScreen(navController: NavController) {
+    Text("This is the Nested End Screen")
+}
+```
+
+### 重点：
+1. **主导航**（`home`）和**嵌套导航**（`nested`）之间的跳转是通过 `navController.navigate("nested/nestedStart")` 来触发的。
+2. 嵌套的页面 `"nestedStart"` 和 `"nestedEnd"` 是在 `navigation` 内部定义的。
+3. 这样做之后，嵌套的导航才会生效，用户从 `HomeScreen` 可以通过点击按钮进入嵌套的页面。
+
+
+
 ### 条件导航（Conditional Navigation）
 
 你可以在某些情况下，根据条件来决定跳转路径：
