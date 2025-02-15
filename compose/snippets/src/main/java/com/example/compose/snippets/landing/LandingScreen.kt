@@ -42,7 +42,7 @@ fun LandingScreen(
     Scaffold(
         topBar = {
             TopAppBar(title = {
-                Text(text = "Android snippets",)
+                Text(text = "Android snippets")
             })
         }
     ) { padding ->
@@ -62,6 +62,7 @@ fun NavigationItems(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(Destination.entries) { destination ->
+            //这个不会kotlin就看不懂了，很简单的一个传递一个参数，处理一个点击事件
             NavigationItem(destination) {
                 navigate(
                     destination

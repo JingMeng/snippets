@@ -33,16 +33,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.compose.snippets.navigation.TopComponentsDestination
 
+//简单的重复了一个二级页面
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComponentsScreen(
     navigate: (TopComponentsDestination) -> Unit
 ) {
     Scaffold(topBar = {
+        //标题
         TopAppBar(title = {
             Text("Common Components")
         })
     }, content = { padding ->
+        //懒加载了
         LazyColumn(
             modifier = Modifier
                 .padding(padding)

@@ -77,20 +77,24 @@ class SnippetsActivity : ComponentActivity() {
                 ) {
                     NavHost(navController, startDestination = "LandingScreen") {
                         composable("LandingScreen") {
+                            //这边又是一个回调，这个回调决定了我们的点击事件的去处
                             LandingScreen { navController.navigate(it.route) }
                         }
                         Destination.entries.forEach { destination ->
+                            //这个就是定义了很多路由的目的地
                             composable(destination.route) {
                                 when (destination) {
                                     Destination.BrushExamples -> BrushExamplesScreen()
                                     Destination.ImageExamples -> ImageExamplesScreen()
                                     Destination.AnimationQuickGuideExamples -> AnimationExamplesScreen()
                                     Destination.ScreenshotExample -> BitmapFromComposableFullSnippet()
+                                    //组件的这个实现了二级导航
                                     Destination.ComponentsExamples -> ComponentsScreen {
                                         navController.navigate(
                                             it.route
                                         )
                                     }
+
                                     Destination.ShapesExamples -> ApplyPolygonAsClipImage()
                                     Destination.SharedElementExamples -> PlaceholderSizeAnimated_Demo()
                                     Destination.PagerExamples -> PagerExamples()
@@ -112,6 +116,7 @@ class SnippetsActivity : ComponentActivity() {
                                     TopComponentsDestination.AppBarExamples -> AppBarExamples {
                                         navController.popBackStack()
                                     }
+
                                     TopComponentsDestination.CheckboxExamples -> CheckboxExamples()
                                     TopComponentsDestination.DividerExamples -> DividerExamples()
                                     TopComponentsDestination.BadgeExamples -> BadgeExamples()

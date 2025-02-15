@@ -77,6 +77,7 @@ fun ImageExamplesScreen() {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+        ContentClipExample()
         ContentScaleExample()
         ClipImageExample()
         ClipRoundedCorner()
@@ -92,6 +93,35 @@ fun ImageExamplesScreen() {
         ImageBlur()
         ImageBlurEdgeTreatment()
     }
+}
+
+
+//在商城商品列表的时候经常使用 clip的这个操作
+@Preview
+@Composable
+fun ContentClipExample() {
+    // [START android_compose_content_scale]
+    val imageModifier = Modifier
+        .size(200.dp)
+        .border(BorderStroke(1.dp, Color.Black))
+        .background(Color.Yellow)
+        .clip(
+            RoundedCornerShape(
+                topStart = 22.dp,
+                topEnd = 22.dp,
+                bottomStart = 0.dp,
+                bottomEnd = 0.dp
+            )
+        ) // 仅上方圆角
+
+    Image(
+        painter = painterResource(id = R.drawable.dog),
+        contentDescription = stringResource(id = R.string.dog_content_description),
+        contentScale = ContentScale.Crop,
+        modifier = imageModifier,
+
+        )
+    // [END android_compose_content_scale]
 }
 
 @Preview
